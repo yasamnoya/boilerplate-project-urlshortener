@@ -56,7 +56,7 @@ app.get('/api/shorturl/:id', async (req, res) => {
   if (!url) {
     return res.status(404).send("shorturl not found");
   };
-  res.redirect(`http://${url.url}`);
+  res.redirect(url.url);
 });
 
 app.listen(port, function() {
