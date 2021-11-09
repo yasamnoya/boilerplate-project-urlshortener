@@ -32,6 +32,7 @@ app.get('/api/hello', function(req, res) {
 });
 
 app.post('/api/shorturl', async (req, res) => {
+  console.log(req.body.url);
   const cleanUrl = req.body.url.replace(/https?:\/\//, "").replace(/\/$/, "");
   dns.lookup(cleanUrl, (err, addr) => {
     if (err) {
