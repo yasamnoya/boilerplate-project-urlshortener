@@ -33,14 +33,19 @@ app.get('/api/hello', function(req, res) {
 
 app.post('/api/shorturl', async (req, res) => {
   console.log(req.body.url);
-  const cleanUrl = req.body.url.replace(/https?:\/\//, "").replace(/\/$/, "");
-  dns.lookup(cleanUrl, (err, addr) => {
+  const urlWithoutTailingSlash = req.body.url.replace(/\/$/, "");
+  const urlWithoutProtocol = urlWithoutTailingSlash.replace(/https?:\/\//, "");
+  const domainName = urlWithoutProtocol.replace(/\/.*$/, "");
+  dns.lookup(domainName, async (err, addr) => {
     if (err) {
       return res.json({ error: "invalid url" });
     }
+    let url = await Url.findOne({ url: urlWithoutProtocol });
+    if (!url) {
+      url = await Url.create({ url: urlWithoutProtocol });
+    }
+    res.json(url);
   });
-  const url = await Url.create({ url: cleanUrl });
-  res.json(url);
 });
 
 app.get('/api/shorturl/:id', async (req, res) => {
