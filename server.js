@@ -40,11 +40,14 @@ app.post('/api/shorturl', async (req, res) => {
     if (err) {
       return res.json({ error: "invalid url" });
     }
-    let url = await Url.findOne({ url: urlWithoutProtocol });
+    let url = await Url.findOne({ url: urlWithoutTailingSlash });
     if (!url) {
-      url = await Url.create({ url: urlWithoutProtocol });
+      url = await Url.create({ url: urlWithoutTailingSlash });
     }
-    res.json(url);
+    res.json({
+      original_url: url.url,
+      short_url: url._id,
+    });
   });
 });
 
